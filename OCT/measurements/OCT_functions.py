@@ -9,6 +9,8 @@ This file includes functions required to parse, extract, analyze data acquired f
 Primary authors:
 	Rijan Maharjan
 	Sanket Bohora
+
+Last edited: March 24, 2020.
 """
 
 def heterodyne_extract(experimental_series, reference_series, num_pts_sm, HP_threshold, time_step):
