@@ -3,30 +3,10 @@ import time
 import numpy as np 
 import datetime
 
-# #import visa
-# from pymeasure.instruments.thorlabs import ThorlabsPM100USB
-
-# # power meter
-# # FOR PM100D
-# device_PM100D = 'USB0::0x1313::0x8078::P0015908::INSTR'
-# device_PM100A = 'USB0::0x1313::0x8079::P1003337::INSTR'
-# power_meter = ThorlabsPM100USB(device_PM100D)
-
-# # opening the board
-# baud_rate =115200
-# arduino = serial.Serial("COM3", baud_rate, timeout=0)
-
-# wakeup="\r\n\r\n"
-
-# # Wake up grbl
-# arduino.write(wakeup.encode())
-# time.sleep(2)   # Wait for grbl to initialize 
-# arduino.flushInput()
-
 def generate_position_parameters(ax1, ax1_begin, ax1_end, ax1_step,\
 					ax2, ax2_begin, ax2_end, ax2_fine_step, ax2_coarse_step, ax2_step_factor, ax2_change_ht):
 	"""
-	Code to generate movement parameters, as well as current position to be written to file. 
+	Function to generate movement parameters, as well as current position to be written to file. 
 	This function supports two axis only, with ax2 supporting coarse and fine movement.
 	ax1 can be either x or y, but not z. Ax2 can be x, y, or z.
 	"""
@@ -119,22 +99,22 @@ def generate_position_parameters(ax1, ax1_begin, ax1_end, ax1_step,\
 		
 	return ax1_loops, ax2_loops, ax1_pos_list, ax2_pos_list, g_code_list
 
-# for a case when 1 axis is z
-x_loops, z_loops, x_pos, z_pos, gcode = generate_position_parameters(ax1 = 'x', ax1_begin = -15.0, ax1_end = 15.0, ax1_step = 5.0, \
-							ax2 = 'z', ax2_begin = 0.0, ax2_end = 100.0, \
-							ax2_fine_step = 0.50, ax2_coarse_step = 2.0, ax2_step_factor = 10.0, ax2_change_ht = 60.0)
+# # for a case when 1 axis is z
+# x_loops, z_loops, x_pos, z_pos, gcode = generate_position_parameters(ax1 = 'x', ax1_begin = -15.0, ax1_end = 15.0, ax1_step = 5.0, \
+# 							ax2 = 'z', ax2_begin = 0.0, ax2_end = 100.0, \
+# 							ax2_fine_step = 0.50, ax2_coarse_step = 2.0, ax2_step_factor = 10.0, ax2_change_ht = 60.0)
 
-n = 0
-counter = 0
-for z in range(z_loops):
-	for x in range(x_loops):
-		fname = "x_" + "{:.1f}".format(x_pos[x]) + "z_" + "{:.1f}".format(z_pos[z])+".txt"
-		print(counter, "\t", x_pos[x], "\t", z_pos[z], "\t", gcode[n],"\t",fname)
-		n += 1
-		counter += 1
-	print(gcode[n])
-	print(gcode[n + 1])
-	n += 2
+# n = 0
+# counter = 0
+# for z in range(z_loops):
+# 	for x in range(x_loops):
+# 		fname = "x_" + "{:.1f}".format(x_pos[x]) + "z_" + "{:.1f}".format(z_pos[z])+".txt"
+# 		print(counter, "\t", x_pos[x], "\t", z_pos[z], "\t", gcode[n],"\t",fname)
+# 		n += 1
+# 		counter += 1
+# 	print(gcode[n])
+# 	print(gcode[n + 1])
+# 	n += 2
 
 
 # x_loops, y_loops, x_pos, y_pos, gcode = generate_position_parameters(ax1 = 'x', ax1_begin = -125.0, ax1_end = 125.0, ax1_step = 5.0, \
