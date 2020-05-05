@@ -6,6 +6,10 @@ import glob
 import parse_ATS as ATSReader
 import utility_functions as util
 
+"""
+Program to parse data from DAQ. Need to define the directory to be parsed, the saved location and the number of channels. 
+Will produce PDF with the data ploted. Additional options are to show the plots. 
+"""
 
 def parse_and_plot(data_directory, parsed_directory, write_files, show_plot, num_channels):
 	"""

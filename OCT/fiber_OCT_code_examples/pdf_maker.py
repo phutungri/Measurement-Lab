@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Feb 17 09:27:57 2020
-
-@author: sanke
-"""
-
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -15,8 +8,11 @@ import re
 import fiber_OCT_support_functions as fosf
 
 """
-Program to import data from a particular folder and make pdfs. Specifically for the OCT experiments 
+Program to import data from a particular folder and make PDFs. Specifically for the OCT experiments 
 where data is taken at different reference mirror positions. 
+Need to declare the location of the data to be made into PDF and the location to save the PDF. The expected columns
+in the text file and the data column to be used to make the PDFs has to be declared.
+Other options on how to process the data and wether to show the plots as the program is available  
 """
 
 

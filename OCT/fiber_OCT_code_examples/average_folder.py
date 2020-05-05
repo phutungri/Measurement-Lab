@@ -1,17 +1,11 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Feb 10 15:30:42 2020
-
-@author: sanke
-"""
-
 import os
 import glob
 import pandas as pd
 import numpy as np
 import sys
 
-# adding package location to path to import custom functions
+# adding package location to path to import custom functions. This will depend on the location the
+#programs utility_function and OCT_functions are saved in so change accordingly. 
 sys.path.append('C:\\Users\\sanke\\Documents\\GitHub\\Measurement-Lab\\OCT')
 
 import utility_functions as util
@@ -19,12 +13,13 @@ import OCT_functions as OCT_tech
 
 import fiber_OCT_support_functions as fosf
 
+"""
+The program averages a directory with folders of data. Each folders of data should be of the same conditions.
+Need to declare the location of the data to be averaged and the place to be save the results.
+Expected columns also has to be declared
+"""
 
-"""
-TO DO
-Bug with parsed data. Need testing what was the cause. Resulted in NAN in all 
-of data columns except the wavelength column.  
-"""
+
 
 def multi_txt_1column_index_average(data_folder_path,column_names):
     

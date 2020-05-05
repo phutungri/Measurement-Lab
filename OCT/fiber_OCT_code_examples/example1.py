@@ -1,19 +1,26 @@
-"""
-Basic example to process a single parsed OCT data. 
-If richardson lucy algorithm is to be applied, source data has to be provided.  
-"""
-
 import numpy as np
 import pandas as pd
 import sys
 import matplotlib.pyplot as plt
 
-# adding package location to path to import custom functions
+# adding package location to path to import custom functions. This will depend on the location the
+#programs utility_function and OCT_functions are saved in so change accordingly. 
 sys.path.append('C:\\Users\\sanke\\Documents\\GitHub\\Measurement-Lab\\OCT')
 
 import OCT_functions as OCT_tech
 
 import fiber_OCT_support_functions as fosf
+
+
+
+"""
+Basic example to process a single parsed OCT data. 
+If richardson lucy algorithm is to be applied, source data has to be provided by providing the path to this data.
+
+The user is required to set the setting according to what is desired. The paths to the data will depend
+according to where the user has stored the data. The expected columns are the columns in the data file.
+The numbers of columns should match however the name of the columns are not important.  
+"""
 
 
 #user set settings    

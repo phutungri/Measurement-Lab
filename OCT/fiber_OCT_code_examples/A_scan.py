@@ -3,7 +3,8 @@ import os
 import pandas as pd
 import sys
 
-# adding package location to path to import custom functions
+# adding package location to path to import custom functions. This will depend on the location the
+#programs utility_function and OCT_functions are saved in so change accordingly. 
 sys.path.append('C:\\Users\\sanke\\Documents\\GitHub\\Measurement-Lab\\OCT')
 
 import utility_functions as util
@@ -11,14 +12,11 @@ import OCT_functions as OCT_tech
 
 import fiber_OCT_support_functions as fosf
 
-##TO DO
-#Optimisation-removing legacy code,
-#centeral function folder
-
-
-
+#Program processing data to get distance vs light being reflected.
+#Need to declared the path of the data to be processed and the results to be saved. 
+#Need to declare the expected columns as well as additional options on how the process the data. 
 #program expecting a folder with text files with atleast 2 colums with
-#wavelength(nm), Data1 output(mw), Data2 output(mw)...
+#wavelength(nm), Data1 output(mw), Data2 output(mw). The second data (Data2) is optional.
 
 
 def get_avr_source(source_filename_array):
@@ -146,6 +144,8 @@ setting={
 			#option->wavelength and power columns. Can accept more than one power
 			#colums. Must be consistent with all data that are being batched
 	"folder_containing_folders":False,
+		#if data path is a folder containing the data file, declare false. If the path contains a folder with multiple 
+		#folders containing data, declare true.
 	
 	
 	"result_txt_path":'C:\\Users\\sanke\\OneDrive\\Phutung\\OCT_experiment\\Data\\test_21_01_2020\\results_txt\\set2',
