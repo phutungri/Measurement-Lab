@@ -5,6 +5,7 @@ import os
 import glob
 import parse_ATS as ATSReader
 import utility_functions as util
+import sys
 
 """
 Program to parse data from DAQ. Need to define the directory to be parsed, the saved location and the number of channels. 
@@ -136,6 +137,10 @@ def parse_and_plot(data_directory, parsed_directory, write_files, show_plot, num
 	
 if __name__=="__main__":
 
+	sys.path.append('C:\\Users\\sanke\\Documents\\GitHub\\Measurement-Lab\\OCT\\fiber_OCT_code_examples')
+
+	import fiber_OCT_support_functions as fosf
+
 	setting={
 
 		"data_main_directory":'C:\\Users\\sanke\\OneDrive\\Phutung\\OCT_experiment\\Data\\test_21_01_2020\\raw_data',
@@ -148,10 +153,10 @@ if __name__=="__main__":
 		}
 
 
-	data_foldernames,data_folderpaths= util.get_foldername_paths_in_folder(setting["data_main_directory"])
+	data_foldernames,data_folderpaths= fosf.get_foldername_paths_in_folder(setting["data_main_directory"])
 
 
-	parsed_folderpaths=util.get_parsed_folderpaths(
+	parsed_folderpaths=fosf.get_parsed_folderpaths(
 		data_foldernames,
 		setting["parsed_main_directory"])
 

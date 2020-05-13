@@ -303,6 +303,92 @@ class OCT_RT:
 			self.data_power_tmp=self.data_power
 		self.data_distance,self.data_processed_amplitude=OCT_tech.get_distance_data_OCT_RT(self.data_wavelength,self.data_power_tmp,self.data_end_buffer)
 	
- 
+class live_plot:
 
+	def __init__(self,
+				x_axis,
+				y_axis,
+				):
+		
+		self.x_axis=x_axis
+		self.y_axis=y_axis
+		
+	def plot_initialise(self):
+		plt.ion()
+		self.fig = plt.figure()
+		self.ax = self.fig.add_subplot(111)
+		self.line1, = self.ax.plot(self.x_axis,self.y_axis, 'r-')
+		
+	def update_plot(self,new_y):
+		if self.check_fig_exist()==True:
+			self.line1.set_ydata(new_y)
+			self.ax.set_ylim(util.rounddown((new_y).min(),1),1.1*util.roundup((new_y).max(),1))
+			self.fig.canvas.draw()
+			self.fig.canvas.flush_events()
+			
+		else:
+			plt.close(self.fig)
+			print("figure has been closed")
+		
+	def check_fig_exist(self):
+		if plt.fignum_exists(self.fig.number)==True:
+			return True
+		elif plt.fignum_exists(self.fig.number)==False:
+			return False
+		else:
+			print("ERROR in check close")
+
+
+if __name__="__main__":
+	distance_range=np.array([0,1000])
+	wavelength_range=np.array([1257,1355])
+
+	data_PSF_path="D:\\SanketWorkFiles\\real_time_OCT\\Data\\Parsed_source\\avg_source_26_02_2020.txt"
+
+	data_PSF=pd.read_csv(
+		data_PSF_path,
+		sep='\t',
+		)
+
+	data_PSF=np.array(data_PSF)
+	PSF_wavelength_index_range=util.find_low_higher_index(data_PSF,wavelength_range)
+	PSF_wavelength=data_PSF[PSF_wavelength_index_range[0]:PSF_wavelength_index_range[0],0]
+	PSF_ampl=data_PSF[PSF_wavelength_index_range[0]:PSF_wavelength_index_range[0],1]
+
+	# main=OCT_RL(richardson_lucy=True,PSF=PSF_ampl)
+	main=OCT_RL()
+	main.configure_DAQ_board()
+	main.update_data_amplitude()
+	wavelength_index_range=util.find_low_higher_index(main.data_wavelength, wavelength_range)
+	main.clip_wavelength_power(wavelength_index_range)
+	main.process_data()
+
+	index_range=util.find_low_higher_index(main.data_distance,distance_range)
+
+
+	wavelength_live_plot=live_plot(x_axis=main.data_wavelength,
+								y_axis=main.data_power)
+	wavelength_live_plot.plot_initialise()
+
+	fft_live_plot=live_plot(x_axis=main.data_distance[index_range[0]:index_range[1]],
+						y_axis=main.data_processed_amplitude[index_range[0]:index_range[1]])
+	fft_live_plot.plot_initialise()
+
+	while (fft_live_plot.check_fig_exist() & wavelength_live_plot.check_fig_exist()):
+		
+		main.update_data_amplitude()
+		main.clip_wavelength_power(wavelength_index_range)
+		main.process_data()
+		
+		if fft_live_plot.check_fig_exist() & wavelength_live_plot.check_fig_exist()==True:
+			wavelength_live_plot.update_plot(main.data_power)
+		else:
+			plt.close(wavelength_live_plot.fig)
+			plt.close(fft_live_plot.fig)
+		
+		if fft_live_plot.check_fig_exist() & wavelength_live_plot.check_fig_exist()==True:
+			fft_live_plot.update_plot(main.data_processed_amplitude[index_range[0]:index_range[1]])
+		else:
+			plt.close(fft_live_plot.fig)
+			plt.close(wavelength_live_plot.fig)
 

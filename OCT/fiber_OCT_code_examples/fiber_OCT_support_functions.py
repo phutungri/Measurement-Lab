@@ -38,6 +38,19 @@ def get_foldername_paths_in_folder(path):
         
     return fname_arr,fpath_arr
 
+def get_parsed_folderpaths(fnames,parsed_main_path):
+    
+    """
+    For a given array of foldernames and the path for the folders, 
+    this function will return an array with the foldernames appended to the path
+    """
+    
+    parsed_fname_arr=[]
+    for n in fnames:
+        parsed_fname_arr.append(parsed_main_path+"\\"+n)
+        
+    return parsed_fname_arr
+
 def add_str_to_list(string,arr):
     for n in range(len(arr)):
         arr[n]=arr[n]+'_'+string

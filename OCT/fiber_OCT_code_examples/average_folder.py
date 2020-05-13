@@ -61,7 +61,7 @@ def add_avg_txt_to_strarr(arr):
     return n_arr
 
 def average_folder_folder_data(folder_folder_path,save_path,column_names):
-    save_filename,data_folder_paths=(util.get_foldername_paths_in_folder(folder_folder_path))
+    save_filename,data_folder_paths=(fosf.get_foldername_paths_in_folder(folder_folder_path))
     save_filename=add_avg_txt_to_strarr(save_filename)
     
     

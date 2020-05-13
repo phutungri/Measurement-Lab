@@ -86,7 +86,7 @@ def process_single_OCT(filename,folder_path,source_data,setting):
 def process_folder_of_folder_OCT(source_data,setting):
 	
 	if setting["folder_containing_folders"]==True:
-		folder_names,folder_paths=util.get_foldername_paths_in_folder(setting["data_path"])
+		folder_names,folder_paths=fosf.get_foldername_paths_in_folder(setting["data_path"])
 	else:
 		folder_paths=[setting["data_path"]]
 		folder_names=[""]
@@ -94,7 +94,7 @@ def process_folder_of_folder_OCT(source_data,setting):
 	print(folder_paths)
 	for n in range(0,len(folder_paths)):
 		os.chdir(folder_paths[n])
-		filenames,filepaths=util.list_txt_file(folder_paths[n])
+		filenames,filepaths=fosf.list_txt_file(folder_paths[n])
 		folder_to_save=setting["result_txt_path"]+"\\results_"+folder_names[n]
 		if not os.path.exists(folder_to_save):
 			os.makedirs(folder_to_save)
@@ -132,7 +132,7 @@ setting={
 
 
 		  
-	"richardson_lucy":False,
+	"richardson_lucy":True,
 		# options-> True,False 
 	"remove_DC":False,
 		# options-> True,False
@@ -148,7 +148,7 @@ setting={
 		#folders containing data, declare true.
 	
 	
-	"result_txt_path":'C:\\Users\\sanke\\OneDrive\\Phutung\\OCT_experiment\\Data\\test_21_01_2020\\results_txt\\set2',
+	"result_txt_path":'C:\\Users\\sanke\\OneDrive\\Phutung\\OCT_experiment\\Data\\test_21_01_2020\\results_txt\\set4',
 	"data_path":'C:\\Users\\sanke\\OneDrive\\Phutung\\OCT_experiment\\Data\\test_21_01_2020\\avr_data',
 	"source_path":'C:\\Users\\sanke\\OneDrive\\Phutung\\OCT_experiment\\Data\\test_21_01_2020\\parsed_source',
 		
