@@ -1,9 +1,6 @@
 import numpy as np 
 from scipy import fftpack
-import scipy.signal as sig
-import matplotlib.pyplot as plt 
-import os
-import glob
+import math
 
 # simple utility functions for python
 
@@ -101,26 +98,22 @@ def normalise(array_matrix):
 
 def roundup(x, sf=1):
 	try:
-		decimalpoint=int((floor(log10(abs(x))))-(sf-1))
+		decimalpoint=int((math.floor(math.log10(abs(x))))-(sf-1))
 	except:
 		decimalpoint=0
 	n=10**decimalpoint
-	rounded=ceil(x/n)*n
+	rounded=math.ceil(x/n)*n
 	return rounded
 
 def rounddown(x,sf=1):
 	try:
-		decimalpoint=int((floor(log10(abs(x))))-(sf-1))
+		decimalpoint=int((math.floor(math.log10(abs(x))))-(sf-1))
 	except:
 		decimalpoint=0
 	n=10**decimalpoint
-	rounded=floor(x/n)*n
+	rounded=math.floor(x/n)*n
 	return rounded
 
-def find_nearest(array, value):
-	array = np.asarray(array)
-	idx = (np.abs(array-value)).argmin()
-	return idx
 
 def find_low_higher_index(value_array,limits_array):
 	idx_low=find_nearest(value_array, limits_array[0])
