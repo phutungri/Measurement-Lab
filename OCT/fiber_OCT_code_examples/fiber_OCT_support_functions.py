@@ -1,6 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
-import scipy.interpolate as intrp
 import os
 import pandas as pd
 import sys
@@ -11,8 +9,6 @@ import glob
 sys.path.append('C:\\Users\\sanke\\Documents\\GitHub\\Measurement-Lab\\OCT')
 
 import utility_functions as util
-import OCT_functions as OCT_tech
-
 
 def list_txt_file(path):
     starting_dir=os.path.abspath(os.getcwd())

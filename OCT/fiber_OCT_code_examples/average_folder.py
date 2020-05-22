@@ -1,16 +1,5 @@
-import os
-import glob
 import pandas as pd
 import numpy as np
-import sys
-
-# adding package location to path to import custom functions. This will depend on the location the
-#programs utility_function and OCT_functions are saved in so change accordingly. 
-sys.path.append('C:\\Users\\sanke\\Documents\\GitHub\\Measurement-Lab\\OCT')
-
-import utility_functions as util
-import OCT_functions as OCT_tech
-
 import fiber_OCT_support_functions as fosf
 
 """
