@@ -20,19 +20,6 @@ global RF_conversion_gain
 RF_conversion_gain = 10 * 1e3 # volts/watt
 
 
-def get_config(config_file):
-	"""
-	Imports the configuration file written during data acquisition using Alazar SDK techniques
-	"""
-	with open(config_file, 'r') as myConfigFile:
-		configParams = []
-		for i in range(8): # number of configuration parameters, known
-			line = myConfigFile.readline().strip()
-			configParams.append(line.split("\t")[-1])
-	print('Board configuration parameters:')
-	print(configParams)
-	return configParams
-
 def single_process(configParams, no_chip_data_array, data_file, data_file_channels):
 	"""
 	Import and analyze a single sample file. 
@@ -91,7 +78,7 @@ def single_process(configParams, no_chip_data_array, data_file, data_file_channe
 	wavelength_nm = OCT_tech.time_to_wavelength_HSL20(nc_time)
 	# get integrated power using simpsons rule
 	normalized_power = integrate.simps(chip_extract, nc_time)
-	return wavelength_nm, chip_extract, normalized_power, nc_time
+	return wavelength_nm, chip_extract, normalized_power, nc_time, chA_watt, chB_watt
 
 def batch_process(no_chip_data_array, 
 				source_directory, 
@@ -149,7 +136,7 @@ def batch_process(no_chip_data_array,
 		x_coord[k] = x_val
 		y_coord[k] = y_val
 		# process the individual files
-		wavelength_nm, chip_extract, normalized_power, _ = single_process(configParams,
+		wavelength_nm, chip_extract, normalized_power, _, _, _ = single_process(configParams,
 																	no_chip_data_array,
 																	files[k],
 																	filesChannels)
@@ -157,6 +144,76 @@ def batch_process(no_chip_data_array,
 			compiled_data.write("%0.2f\t%0.2f\t%0.13f\n" %(x_val, y_val, normalized_power))
 	if (write_files == 1 and save_plots == 1):
 		plot_compiled_2D(data_destination + outDataFile, 0, 1)
+	return
+
+def volume_batch_process(no_chip_data_array, 
+				source_directory, 
+				data_destination, 
+				write_files, 
+				save_plots, 
+				outDataFile,
+				ax1,
+				ax2,
+				ax3):
+	"""
+	Function to batch process data files from DAQ, acquired using Alazar SDK system.
+	Arguments:
+		no_chip_data_array 		: RF signal out of balance detector, with the chip line disconnected, numpy 2D array. no_chip_data_array = [nc_time, nc_samples, nc_volts]
+		source_directory 		: Directory where the files to process are saved. Filenames must be coordinate locations
+		data_destination		: directory to save outDataFile
+		plot_destination		: directory to save compiled data plots of integrated power if save plots enabled, and 
+		write_files				: binary, write compiled files or not
+		save_plots				: binary, save compliled plot or not
+		outDataFile				: filename for output of compiled data
+		ax1						: ax1 label, x
+		ax2						: ax2 label, y
+		ax2						: ax3 label, z
+	
+	Edited: 20 May 2020. Rijan Maharjan
+
+	"""
+	files = glob.glob(source_directory + '*.txt')
+	filesChannels = 2
+	# check and remove the configuration file and outDataFile if it exists in the list
+	if source_directory + 'configuration.txt' in files: files.remove(source_directory + 'configuration.txt')
+	if source_directory + outDataFile in files: files.remove(source_directory + outDataFile)
+	
+	try:
+		configParams = get_config(source_directory + 'configuration.txt')
+	except FileNotFoundError:
+		print("Configuration file missing. Aborting.")
+	except:
+		e = sys.exc_info()[0]
+		print("Unexpected error: ", e)
+		raise
+
+	# get the xyz coordinates
+	x_coord = np.zeros(len(files))
+	y_coord = np.zeros(len(files))
+	z_coord = np.zeros(len(files))
+	integral_value = np.zeros(len(files))
+
+	if write_files == 1:
+		compiled_data = open(data_destination + outDataFile, 'w')
+		compiled_data.write(ax1+'_coord\t'+ax2+'_coord\t'+ax3+'_coord\tnormalized power\n')
+
+	for k in range(len(files)):
+	# for k in range(5):
+		# parse the filename
+		fname = files[k]
+		x_val, y_val, z_val = util.volume_filename_to_coordinate(fname, ax1, ax2, ax3)
+		x_coord[k] = x_val
+		y_coord[k] = y_val
+		z_coord[k] = z_val
+		# process the individual files
+		wavelength_nm, chip_extract, normalized_power, _, _, _ = single_process(configParams,
+																	no_chip_data_array,
+																	files[k],
+																	filesChannels)
+		if write_files == 1:
+			compiled_data.write("%0.2f\t%0.2f\t%0.2f\t%0.13f\n" %(x_val, y_val, z_val, normalized_power))
+	# if (write_files == 1 and save_plots == 1):
+	# 	plot_compiled_2D(data_destination + outDataFile, 0, 1)
 	return
 
 def plot_compiled_2D(compiled_file, show_plot, save_plot):
