@@ -19,6 +19,18 @@ bits_per_sample = 12
 global RF_conversion_gain
 RF_conversion_gain = 10 * 1e3 # volts/watt
 
+def get_config(config_file):
+	"""
+	Imports the configuration file written during data acquisition using Alazar SDK techniques
+	"""
+	with open(config_file, 'r') as myConfigFile:
+		configParams = []
+		for i in range(8): # number of configuration parameters, known
+			line = myConfigFile.readline().strip()
+			configParams.append(line.split("\t")[-1])
+	print('Board configuration parameters:')
+	print(configParams)
+	return configParams
 
 def single_process(configParams, no_chip_data_array, data_file, data_file_channels):
 	"""
