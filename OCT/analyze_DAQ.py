@@ -12,6 +12,7 @@ import sys
 from matplotlib import ticker, cm
 import pandas as pd
 import time
+import ntpath
 
 global bits_per_sample
 bits_per_sample = 12
@@ -187,9 +188,12 @@ def volume_batch_process(no_chip_data_array,
 	files = glob.glob(source_directory + '*.txt')
 	filesChannels = 2
 	# check and remove the configuration file and outDataFile if it exists in the list
-	if source_directory + 'configuration.txt' in files: files.remove(source_directory + 'configuration.txt')
+	if ntpath.basename(files[0]) == 'configuration.txt':
+		files.pop(0)
+	# if source_directory[:-1] + '\\configuration.txt' in files: files.remove(source_directory[:-1] + '\\configuration.txt')
 	if source_directory + outDataFile in files: files.remove(source_directory + outDataFile)
-	
+	# print(files[0])
+	# print(source_directory + 'configuration.txt')
 	try:
 		configParams = get_config(source_directory + 'configuration.txt')
 	except FileNotFoundError:

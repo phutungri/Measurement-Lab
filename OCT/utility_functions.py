@@ -2,6 +2,7 @@ import numpy as np
 from scipy import fftpack
 import math
 import re
+import ntpath
 
 # simple utility functions for python
 
@@ -73,7 +74,12 @@ def plane_filename_to_coordinate(fname, ax1, ax2):
 # returns coordinate positions as an array from a filename that includes the values
 # this file is created from the DAQ system acquisition codes (SDK versions)
 def volume_filename_to_coordinate(fname, ax1, ax2, ax3):
-	fragments = fname.split('/')[-1]
+	fragments = ntpath.basename(fname)
+	# try:
+	# 	fragments = fname.split('/')[-1]
+	# except IndexError:
+	# 	# in case of windows
+	# 	fragments = fname.split('\\')[-1]
 	fragments = fragments.rstrip(".txt")
 	# print(fragments)
 	ax1 = ax1 + '_'
@@ -81,6 +87,7 @@ def volume_filename_to_coordinate(fname, ax1, ax2, ax3):
 	ax3 = ax3 + '_'
 	splitter = ax1 + '|' + ax2 + '|' + ax3
 	sub_frag = re.split(splitter, fragments)
+	# print(sub_frag)
 	ax1_val = float(sub_frag[1])
 	ax2_val = float(sub_frag[2])
 	ax3_val = float(sub_frag[3])
