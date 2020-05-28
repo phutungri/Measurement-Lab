@@ -120,8 +120,11 @@ def batch_process(no_chip_data_array,
 	files = glob.glob(source_directory + '*.txt')
 	filesChannels = 2
 	# check and remove the configuration file and outDataFile if it exists in the list
-	if source_directory + 'configuration.txt' in files: files.remove(source_directory + 'configuration.txt')
+	if ntpath.basename(files[0]) == 'configuration.txt':
+		files.pop(0)
 	if source_directory + outDataFile in files: files.remove(source_directory + outDataFile)
+	# if source_directory + 'configuration.txt' in files: files.remove(source_directory + 'configuration.txt')
+	# if source_directory + outDataFile in files: files.remove(source_directory + outDataFile)
 	
 	try:
 		configParams = get_config(source_directory + 'configuration.txt')
@@ -359,7 +362,7 @@ def wavelength_sheet(no_chip_data_array,
 		x_coord[k] = x_val
 		y_coord[k] = y_val
 		# process the individual files
-		wavelength_nm, chip_extract, _, nc_time = single_process(configParams,
+		wavelength_nm, chip_extract, _, nc_time, _, _ = single_process(configParams,
 																	no_chip_data_array,
 																	files[k],
 																	filesChannels)
@@ -370,6 +373,86 @@ def wavelength_sheet(no_chip_data_array,
 			integral_power_in_range = integrate.simps(chip_extract[idx_min:idx_max], nc_time[idx_min:idx_max])
 			if write_files == 1:
 				compiled_data.write("%0.2f\t%0.2f\t%0.13f\t%0.13f\n" %(x_val, y_val, avg_power_in_range, integral_power_in_range))
+		else:
+			print('bandwidth out of range. fix code')
+	if (write_files == 1 and save_plot == 1):
+		plot_compiled_2D(data_destination + outDataFile, 0, 1)
+	return
+
+def wavelength_volume(no_chip_data_array, 
+				source_directory, 
+				data_destination, 
+				write_files,
+				save_plot, 
+				outDataFile,
+				target_wavelength,
+				ax1, ax2, ax3,
+				bandwidth=1.0):
+	"""
+	Function to extract power at a particular wavelength, with a maximum bandwidth at said wavelength of 10nm
+	Arguments:
+		no_chip_data_array 		: RF signal out of balance detector, with the chip line disconnected, numpy 2D array. no_chip_data_array = [nc_time, nc_samples, nc_volts]
+		source_directory 		: Directory where the files to process are saved. Filenames must be coordinate locations
+		data_destination		: directory to save outDataFile
+		write_files				: binary, write compiled files or not
+		save_plots				: binary, save compliled plot or not. Same name/location as outDataFile.
+		outDataFile				: filename for output of compiled data
+		ax1						: ax1 label, x 
+		ax2						: ax2 label, y
+		ax3						: ax3 label, z
+		bandwidth				: bandwidth to compute power at. defaults to 1.0 nm. Max 10 nm.
+	
+	Edited: 28 May 2020. Rijan Maharjan
+
+	"""
+
+	files = glob.glob(source_directory + '*.txt')
+	filesChannels = 2
+	# check and remove the configuration file and outDataFile if it exists in the list
+	if ntpath.basename(files[0]) == 'configuration.txt':
+		files.pop(0)
+	# if source_directory[:-1] + '\\configuration.txt' in files: files.remove(source_directory[:-1] + '\\configuration.txt')
+	if source_directory + outDataFile in files: files.remove(source_directory + outDataFile)
+	
+	try:
+		configParams = get_config(source_directory + 'configuration.txt')
+	except FileNotFoundError:
+		print("Configuration file missing. Aborting.")
+	except:
+		e = sys.exc_info()[0]
+		print("Unexpected error: ", e)
+		raise
+
+	# get the xy coordinates
+	x_coord = np.zeros(len(files))
+	y_coord = np.zeros(len(files))
+	z_coord = np.zeros(len(files))
+	integral_value = np.zeros(len(files))
+
+	if write_files == 1:
+		compiled_data = open(data_destination + outDataFile, 'w')
+		compiled_data.write(ax1+'_coord\t'+ax2+'_coord\t'+ax3+'_coord\tavg_power\tintegral_power\n')
+
+	for k in range(len(files)):
+	# for k in range(5):
+		# parse the filename
+		fname = files[k]
+		x_val, y_val, z_val = util.volume_filename_to_coordinate(fname, ax1, ax2, ax3)
+		x_coord[k] = x_val
+		y_coord[k] = y_val
+		z_coord[k] = z_val
+		# process the individual files
+		wavelength_nm, chip_extract, _, nc_time, _, _ = single_process(configParams,
+																	no_chip_data_array,
+																	files[k],
+																	filesChannels)
+		if bandwidth <= 10:
+			idx_min = util.find_nearest(wavelength_nm, target_wavelength - bandwidth/2)
+			idx_max = util.find_nearest(wavelength_nm, target_wavelength + bandwidth/2)
+			avg_power_in_range = np.sum(chip_extract[idx_min:idx_max])/(idx_max-idx_min)
+			integral_power_in_range = integrate.simps(chip_extract[idx_min:idx_max], nc_time[idx_min:idx_max])
+			if write_files == 1:
+				compiled_data.write("%0.2f\t%0.2f\t%0.2f\t%0.13f\t%0.13f\n" %(x_val, y_val, z_val, avg_power_in_range, integral_power_in_range))
 		else:
 			print('bandwidth out of range. fix code')
 	if (write_files == 1 and save_plot == 1):
