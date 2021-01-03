@@ -19,17 +19,25 @@ If richardson lucy algorithm is to be applied, source data has to be provided by
 
 The user is required to set the setting according to what is desired. The paths to the data will depend
 according to where the user has stored the data. The expected columns are the columns in the data file.
-The numbers of columns should match however the name of the columns are not important.  
+The numbers of columns should match however the name of the columns are not important. The expected columns
+names help keep track of what is in the column.
 """
 
 
-#user set settings    
+#user set settings 
+#location for OCT data
 data_path="C:\\Users\\sanke\\OneDrive\\Phutung\\OCT_experiment\\Data\\test_21_01_2020\\avr_data\\avg_000um.txt"
 expected_columns=np.array(['Wavelength','Single_Arm','Differential'])   
+
+#option to remove peak at DC
 remove_DC=True
+#option to apply Richardson Lucy algorithm to increase resolution. Requires data of source specturm.
 richardson_lucy=True  
+
+#add 0 at end of data. Potentially increase resolution. Needs more understanding.
 data_end_0buffer=0
 
+#If richardson_lucy is true the source data has to be given
 source_path='C:\\Users\\sanke\\OneDrive\\Phutung\\OCT_experiment\\Data\\test_21_01_2020\\parsed_source\\avg_source.txt'   
 source_expected_columns=np.array(['Wavelength','amplitude'])  
                    
@@ -42,6 +50,7 @@ if len(data.columns.values) != len(expected_columns):
     print("data columns do not match expected columns")
     sys.exit()
     
+#source data can be commented out if not using Richardson Lucy algorithm.
 source_data=pd.read_csv(source_path,sep='\t')
 source_data.columns=source_expected_columns
 
@@ -59,6 +68,7 @@ if richardson_lucy ==True :
     for n in data_tmp.columns[1:]:
         data_tmp[n]=OCT_tech.rl_deconvolution(np.array(data_tmp[n]),source_data[source_expected_columns[1]], 10)        
 
+#the 'test' value is passed to keep track of multiple different data files
 final_data=OCT_tech.get_distance_data('test',data_tmp,expected_columns,data_end_0buffer)
 
 #plotting
