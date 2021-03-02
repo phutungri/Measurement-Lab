@@ -3,7 +3,7 @@ from scipy import fftpack
 import math
 import re
 import ntpath
-
+from scipy.signal import butter,filtfilt
 # simple utility functions for python
 
 """
@@ -48,6 +48,20 @@ def LP_filter(signal, time_step, frequency_to_filter):
 	fft[idx_high_pos[0]] = 0.
 	sig_return = fftpack.ifft(fft)
 	return sig_return.real
+
+# butterworth filter
+
+def butter_lowpass_filter(data, cutoff, fs, order, nyq):
+	# data = data to filter
+	# cutoff = cutoff frequency
+	# fs = data acquisition rate
+	# order = order of polynomial of the data
+	# nyq = nyquist frequency. Typically, I set it at 0.5*data rate (fs)
+    normal_cutoff = cutoff / nyq
+    # Get the filter coefficients 
+    b, a = butter(order, normal_cutoff, btype='low', analog=False)
+    y = filtfilt(b, a, data)
+    return y
 
 # returns coordinate positions as an array from a filename that includes the values
 # this file is created from the DAQ system acquisition codes (SDK versions)
