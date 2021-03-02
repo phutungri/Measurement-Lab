@@ -40,6 +40,15 @@ def HP_filter(signal, time_step, frequency_to_filter):
 	sig_return = fftpack.ifft(fft)
 	return sig_return.real
 
+# low pass filter, returns signal after performing low pass filter
+def LP_filter(signal, time_step, frequency_to_filter):
+	fft = fftpack.fft(signal)
+	fft_freq = fftpack.fftfreq(fft.size, d = time_step)
+	idx_high_pos = np.where((fft_freq > frequency_to_filter) & (fft_freq < -frequency_to_filter))
+	fft[idx_high_pos[0]] = 0.
+	sig_return = fftpack.ifft(fft)
+	return sig_return.real
+
 # returns coordinate positions as an array from a filename that includes the values
 # this file is created from the DAQ system acquisition codes (SDK versions)
 def plane_filename_to_coordinate(fname, ax1, ax2):
